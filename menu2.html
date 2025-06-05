@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>在线点菜系统</title>
+</head>
+<body>
+  <h1>欢迎点菜</h1>
+  <label>姓名：<input type="text" id="username" /></label><br /><br />
+  
+  <label>请选择菜品：</label><br />
+  <input type="checkbox" id="dish1" value="红烧肉" />红烧肉<br />
+  <input type="checkbox" id="dish2" value="鱼香肉丝" />鱼香肉丝<br />
+  <input type="checkbox" id="dish3" value="番茄炒蛋" />番茄炒蛋<br />
+  
+  <br />
+  <button id="submitBtn">提交订单</button>
+
+  <p id="msg"></p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+    // Firebase 配置（换成你自己的）
+    const firebaseConfig = {
+      apiKey: "AIzaSyC43Luwmm9JMJspypR-jJyKJDdYbMbHODQ",
+      authDomain: "order-app-9ea94.firebaseapp.com",
+      databaseURL: "https://order-app-9ea94-default-rtdb.firebaseio.com",
+      projectId: "order-app-9ea94",
+      storageBucket: "order-app-9ea94.appspot.com",
+      messagingSenderId: "1008895820256",
+      appId: "1:1008895820256:web:c7ba4e323fe4bcc50a2b85"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const submitBtn = document.getElementById("submitBtn");
+    const msg = document.getElementById("msg");
+
+    submitBtn.onclick = () => {
+      const username = document.getElementById("username").value.trim();
+      if (!username) {
+        msg.textContent = "请输入姓名";
+        return;
+      }
+      const selectedDishes = [];
+      ["dish1", "dish2", "dish3"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el.checked) selectedDishes.push(el.value);
+      });
+      if (selectedDishes.length === 0) {
+        msg.textContent = "请选择至少一道菜";
+        return;
+      }
+
+      // 订单数据
+      const orderData = {
+        user: username,
+        dishes: selectedDishes,
+        timestamp: Date.now()
+      };
+
+      // 推送订单到数据库
+      push(ref(db, "orders"), orderData)
+        .then(() => {
+          msg.textContent = "订单提交成功！";
+          // 清空选择
+          document.getElementById("username").value = "";
+          ["dish1", "dish2", "dish3"].forEach(id => {
+            document.getElementById(id).checked = false;
+          });
+        })
+        .catch(err => {
+          msg.textContent = "提交失败：" + err.message;
+        });
+    };
+  </script>
+</body>
+</html>

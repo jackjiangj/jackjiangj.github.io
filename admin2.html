@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>后台订单管理</title>
+</head>
+<body>
+  <h1>后台订单管理</h1>
+  <ul id="ordersList"></ul>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC43Luwmm9JMJspypR-jJyKJDdYbMbHODQ",
+      authDomain: "order-app-9ea94.firebaseapp.com",
+      databaseURL: "https://order-app-9ea94-default-rtdb.firebaseio.com",
+      projectId: "order-app-9ea94",
+      storageBucket: "order-app-9ea94.appspot.com",
+      messagingSenderId: "1008895820256",
+      appId: "1:1008895820256:web:c7ba4e323fe4bcc50a2b85"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const ordersRef = ref(db, "orders");
+    const ordersList = document.getElementById("ordersList");
+
+    // 实时监听订单数据
+    onValue(ordersRef, (snapshot) => {
+      const orders = snapshot.val();
+      ordersList.innerHTML = "";
+
+      if (!orders) {
+        ordersList.textContent = "暂无订单";
+        return;
+      }
+
+      Object.entries(orders).forEach(([key, order]) => {
+        const li = document.createElement("li");
+        li.textContent = `${order.user} 点了：${order.dishes.join(", ")} `;
+
+        // 加个删除按钮，删订单
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "删除订单";
+        delBtn.onclick = () => {
+          remove(ref(db, "orders/" + key));
+        };
+        li.appendChild(delBtn);
+
+        ordersList.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>
