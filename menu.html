@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>点菜系统</title>
+</head>
+<body>
+  <h1>欢迎点菜！</h1>
+  <div id="menuList"></div>
+
+  <script>
+    const defaultDishes = ["红烧茄子", "宫保鸡丁", "西红柿炒鸡蛋", "土豆丝", "鱼香肉丝"];
+    if (!localStorage.getItem("dishes")) {
+      localStorage.setItem("dishes", JSON.stringify(defaultDishes));
+    }
+
+    const menuList = document.getElementById("menuList");
+    const dishes = JSON.parse(localStorage.getItem("dishes"));
+    dishes.forEach(dish => {
+      const item = document.createElement("div");
+      item.innerText = dish;
+      menuList.appendChild(item);
+    });
+  </script>
+</body>
+</html>

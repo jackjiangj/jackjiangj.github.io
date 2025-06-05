@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>后台管理系统</title>
+</head>
+<body>
+  <h1>当前菜单（后台）</h1>
+  <div id="dishList"></div>
+
+  <h2>添加新菜</h2>
+  <input type="text" id="newDish" placeholder="请输入菜名">
+  <button onclick="addDish()">添加</button>
+
+  <script>
+    function loadDishes() {
+      const dishes = JSON.parse(localStorage.getItem("dishes") || "[]");
+      const dishList = document.getElementById("dishList");
+      dishList.innerHTML = "";
+      dishes.forEach((dish, index) => {
+        const item = document.createElement("div");
+        item.innerText = `${index + 1}. ${dish}`;
+        dishList.appendChild(item);
+      });
+    }
+
+    function addDish() {
+      const newDish = document.getElementById("newDish").value.trim();
+      if (!newDish) return alert("菜名不能为空！");
+      const dishes = JSON.parse(localStorage.getItem("dishes") || "[]");
+      dishes.push(newDish);
+      localStorage.setItem("dishes", JSON.stringify(dishes));
+      loadDishes();
+      document.getElementById("newDish").value = "";
+    }
+
+    loadDishes();
+  </script>
+</body>
+</html>
