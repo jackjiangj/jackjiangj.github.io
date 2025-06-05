@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>在线点菜系统</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 480px;
+      margin: auto;
+      padding: 20px;
+      background: #f8f8f8;
+    }
+    h1 { text-align: center; }
+    label { display: block; margin-top: 10px; }
+    button {
+      margin-top: 20px;
+      padding: 12px;
+      width: 100%;
+      font-size: 18px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>在线点菜</h1>
+  <label>您的姓名：
+    <input type="text" id="name" placeholder="请输入您的姓名" style="width:100%; padding:10px;">
+  </label>
+
+  <label><input type="checkbox" value="红烧茄子"> 红烧茄子</label>
+  <label><input type="checkbox" value="鱼香肉丝"> 鱼香肉丝</label>
+  <label><input type="checkbox" value="宫保鸡丁"> 宫保鸡丁</label>
+  <label><input type="checkbox" value="西红柿炒鸡蛋"> 西红柿炒鸡蛋</label>
+  <label><input type="checkbox" value="清炒豆角"> 清炒豆角</label>
+
+  <button onclick="submitOrder()">提交订单</button>
+
+  <script>
+    function submitOrder() {
+      const name = document.getElementById('name').value.trim();
+      if (!name) {
+        alert("请输入姓名！");
+        return;
+      }
+
+      const selected = [...document.querySelectorAll('input[type=checkbox]:checked')]
+        .map(cb => cb.value);
+
+      if (selected.length === 0) {
+        alert("请至少选择一个菜！");
+        return;
+      }
+
+      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+      orders.push({ name, dishes: selected, time: new Date().toLocaleString() });
+      localStorage.setItem("orders", JSON.stringify(orders));
+
+      alert("点菜成功！");
+      document.getElementById('name').value = "";
+      document.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false);
+    }
+  </script>
+</body>
+</html>
